@@ -31,6 +31,6 @@ for person in people:
 if matching_people:
     # Formatting the output
     matches = ", ".join([person["name"] for person in matching_people])
-    print("Match: " + matches)
+    print("---------------------" + "\n" + "Match: " + matches)
 else:
-    print("No matching celebrities found.")
+    print("---------------------" + "\n" + "No matching celebrities found.")
