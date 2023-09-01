@@ -1,7 +1,9 @@
 import math
 
-# Print header and ask for input
+# Print header
 print(".:HOTDOG PLANNER:." + "\n" + "---------------------" + "\n" + "How many students wants...")
+
+# Ask for input
 try:
     two_meat = int(input("2 hot dogs (meat) > "))
     if two_meat < 0:
