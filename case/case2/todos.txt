@@ -1,2 +1,5 @@
-[X] todoName
-[ ] ExampleName
+[X] Plugga
+[ ] Städa
+[ ] Andas
+[ ] Kalle Kula
+[ ] åka hem

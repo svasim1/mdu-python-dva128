@@ -16,21 +16,18 @@ def instructions():
     -----------------------------
     """
     print(header)
-
-def openfile(file, mode):
-    with open(f"{file}.txt", mode) as open_file:
-        return
        
-def save_todos(file, todos):
-    with open(f"{file}.txt", "a") as save_file:
+def save_todos():
+    file = "todos"
+    with open(f"{file}.txt", "a", encoding="utf-8") as save_file:
         for todo in todos:
-            save_file.write(todo)
+            save_file.write(f"{todo}\n")
 
 def load_todos(file):
     try:
         with open(f"{file}.txt", "r") as load_file:
             for line in load_file:
-                todos.append(line)
+                todos.append(line.replace("\n", ""))
     except FileExistsError:
         print("ERROR: FILE NOT FOUND")
     
@@ -39,16 +36,33 @@ def list_todo():
     for todo in todos:
         print(todo)
     print("-----------------------------")
-def add_todo(todo):
+    
+def add_todo():
     print("-----------------------------")
-    todo = input("Todo description: ")
-    return
-def check_todo(todos):
-    print('check')
-    return
+    todo = input("Todo description: ")          
+    todos.append(f"[ ] {todo}")
+    
+def check_todo():
+    print("-----------------------------")
+    for i in range(len(todos)):
+        print(f"{i} | {todos[i]}")
+    print("-----------------------------")
+    index = int(input("Todo index > "))
+    if todos[index][1] == ' ':
+        new_line = todos[index].replace(' ','X',1)
+        todos[index] = new_line
+    else:
+        new_line = todos[index].replace('X',' ',1)
+        todos[index] = new_line
+
 def delete_todo():
-    print('delete')
-    return
+    print("-----------------------------")
+    for i in range(len(todos)):
+        
+        print(f"{i} | {todos[i]}")
+    print("-----------------------------")
+    index = input("Todo index > ")
+    del todos[int(index)]
 
 def check_operator(input):
     if input.lower() == 'list':
@@ -65,8 +79,6 @@ def check_operator(input):
         load_todos("todos")
     elif input.lower() == 'exit':
         exit()
-    
-
     
 close = False
 while not close:
