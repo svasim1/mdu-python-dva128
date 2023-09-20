@@ -34,7 +34,7 @@ def load_todos(file):
         with open(f"{file}.txt", "r") as load_file:
             global todos
             todos = json.loads(load_file.readline())
-    except FileExistsError:
+    except FileNotFoundError:
         print("ERROR: FILE NOT FOUND")
 
 # Function to list all the todos
