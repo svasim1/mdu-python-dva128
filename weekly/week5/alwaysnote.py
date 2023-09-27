@@ -1,43 +1,48 @@
+# Imports necessary modules
 import os
 import json
 
-notes = {}
+# Opens notes.json and loads the contents into notes 
+try:
+    with open("notes.json", "r+", encoding="utf-8") as notes_file:
+        notes = json.load(notes_file)
+except FileNotFoundError:
+    with open("notes.json", "w", encoding="utf-8") as notes_file:
+        notes = {}
+        print("INFO: Created notes.json, please restart the program.")
 
+# Function to print the instructions
 def instructions():
     header = """.: ALWAYSNOTE :.
 -- gold edition --
 ******************
-- Important
-- Notes from lecture
-------------------
+"""
+    for note in notes:
+        header += f"- {note}\n"
+    header += """------------------
 view | view note
 add  | add note
 rm   | remove note
 exit | exit program
-------------------
-"""
+------------------"""
     print(header)
     
+# Function to view a note
 def view_note():
-    
-    try:
-        with open("notes.json", "r", encoding="utf-8") as notes_file:
-            notes = json.load(notes_file)
-    except FileNotFoundError:
-        print("ERROR: FILE NOT FOUND")
+    print("------------------")
+    search = input("title > ")
 
-    view_title = input("title > ")
-    
-    for note_title, note_desc in notes.items():
-        if note_title == view_title:
-            print(f"""------------------
+    note_desc = notes.get(search)
+    if note_desc is not None:
+        print(f"""------------------
 {note_desc}
 ------------------""")
-        else:
-            print("""------------------
+    else:
+        print("""------------------
 ERROR: Unknown note
 ------------------""")
     
+# Function to add a note
 def add_note():
     print("------------------")
     title = input("title > ")
@@ -48,36 +53,24 @@ def add_note():
     print("""------------------
 INFO: Note added
 ------------------""")
-    
-    try:
-        with open("notes.json", "w", encoding="utf-8") as notes_file:
-            json.dump(notes, notes_file)
-    except FileNotFoundError:
-        print("ERROR: FILE NOT FOUND")
-        
-def rm_note():
-    try:
-        with open("notes.json", "r", encoding="utf-8") as notes_file:
-            notes = json.load(notes_file)
-    except FileNotFoundError:
-        print("ERROR: FILE NOT FOUND")
+    with open("notes.json", "w", encoding="utf-8") as notes_file:
+        json.dump(notes, notes_file)
 
+# Function to remove a note 
+def rm_note():
     rm_title = input("title > ")
     
     if rm_title in notes:
         del notes[rm_title]
         print("""------------------
-INFO: Note removed
+INFO: Note deleted
 ------------------""")
-        
-        try:
-            with open("notes.json", "w", encoding="utf-8") as notes_file:
-                json.dump(notes, notes_file)
-        except FileNotFoundError:
-            print("ERROR: FILE NOT FOUND")
+        with open("notes.json", "w", encoding="utf-8") as notes_file:
+            json.dump(notes, notes_file)
     else:
-        print(f'ERROR: Note "{rm_title}" not found')
-    
+        print(f"ERROR: Unknown note")
+
+# Function to check the user input
 def check_operator(operator):
     if operator.lower() == "view":
         view_note()
@@ -88,8 +81,9 @@ def check_operator(operator):
     elif operator.lower() == "exit":
         exit()
     else:
-        print(f'ERROR: Invalid operator ({operator})')
+        print(f"ERROR: Invalid operator ({operator})")
 
+# Main loop
 while True:
     if os.name == "nt":
         os.system("cls")
@@ -98,4 +92,4 @@ while True:
     instructions()
     operator = input("menu > ")
     check_operator(operator)
-    input("PRESS ENTER TO CONTINUE...")
+    input("Press enter to continue...")
