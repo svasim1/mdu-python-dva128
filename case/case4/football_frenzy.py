@@ -4,13 +4,33 @@ import json
 
 base_url = 'http://football-frenzy.s3-website.eu-north-1.amazonaws.com/api'
 
+def instructions():
+    header = f"""{("*")*40}
+{"FOOTBALL FRENZY".center(40)}
+{"STAT VIEWER".center(40)}
+{"1.0.0".center(40)}
+{("-")*40}
+| list | List all available seasons
+| view | View table for season
+{("-")*40}"""
+    print(header)
+
 def request_handler(api_url):
     request = requests.get(api_url)
+    
+    if(request.status_code != 200):
+        print(f"| ERROR: {request.status_code}")
+        input("Press enter to continue...")
+        
+        # Replace exit() with better alternative
+        exit()
+    
     request = json.loads(request.text)
     return request
 
 def save_season_data(api_url):
     data = request_handler(api_url)
+    
     gamedays = data["gamedays"]
     teams = data["teams"]
     scoretable = {}
@@ -64,15 +84,22 @@ def change_results(dic, data):
             
 def list_seasons():
     seasons = request_handler(base_url)["seasons"]
+    
     print("-"*40)
-    for key in seasons:
-        print(f"| {seasons[key]}") 
+    for season in seasons:
+        print("| " + season)
+    print("-"*40)
     
 def view_season():
+    print("-"*40)
     selected_year = input("| Year > ")
+    if selected_year not in request_handler(base_url)["seasons"]:
+        print("-"*40 + f"\n| ERROR: Season '{selected_year}' not found\n" + "-"*40)
+        return
+    
     scoretable = save_season_data(base_url + "/" + selected_year)
     
-    print("|" + " "*39)
+    print("*"*40 + "\n|")
     print(f"| {'Team'.ljust(26)}{'W'.ljust(7)}{'D'.ljust(7)}{'L'.ljust(7)}{'P'.ljust(7)}")
     print("| ".ljust(25, '-')  + "  ---    ---    ---    ---")
     
@@ -80,10 +107,9 @@ def view_season():
         team_data = scoretable[team_name]
         team_data = [str(x) for x in team_data]
 
-        
-        
         print("|", team_name.ljust(25), team_data[0].ljust(6), team_data[1].ljust(6), team_data[2].ljust(6), team_data[3].ljust(6))
-
+    
+    print("*"*40)
 
 operations = {
     "list": list_seasons,
@@ -92,9 +118,14 @@ operations = {
 
 while True:
     os.system("cls" if os.name == "nt" else "clear")
-    print("-"*40)
-    operator = input("| Selection > ")
-    operations[operator]()
+    instructions()
+    operator = input("| Selection > ").lower().strip()
+    
+    try:
+        operations[operator]()
+    except KeyError:
+        print("-"*40 + f"\n| Unknown operator ({operator})\n" + "-"*40)
+        
     input("Press enter to continue...")
     
 
