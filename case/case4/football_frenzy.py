@@ -19,10 +19,8 @@ def request_handler(api_url):
     request = requests.get(api_url)
     
     if(request.status_code != 200):
-        print(f"| ERROR: {request.status_code}")
+        print("-"*40 + f"\n| API ERROR: {request.status_code}. \n| Please restart and try again.\n" + "-"*40)
         input("Press enter to continue...")
-        
-        # Replace exit() with better alternative
         exit()
     
     request = json.loads(request.text)
@@ -99,6 +97,9 @@ def view_season():
     
     scoretable = save_season_data(base_url + "/" + selected_year)
     
+    # Recreates the dictionary in order by the fourth value in the array of value
+    scoretable = dict(sorted(scoretable.items(), key=lambda item: item[1][3], reverse=True))
+    
     print("*"*40 + "\n|")
     print(f"| {'Team'.ljust(26)}{'W'.ljust(7)}{'D'.ljust(7)}{'L'.ljust(7)}{'P'.ljust(7)}")
     print("| ".ljust(25, '-')  + "  ---    ---    ---    ---")
@@ -110,6 +111,7 @@ def view_season():
         print("|", team_name.ljust(25), team_data[0].ljust(6), team_data[1].ljust(6), team_data[2].ljust(6), team_data[3].ljust(6))
     
     print("*"*40)
+
 
 operations = {
     "list": list_seasons,
