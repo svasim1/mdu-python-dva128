@@ -4,6 +4,7 @@ import json
 
 base_url = 'http://football-frenzy.s3-website.eu-north-1.amazonaws.com/api'
 
+# Function to print the header
 def instructions():
     header = f"""{("*")*40}
 {"FOOTBALL FRENZY".center(40)}
@@ -15,6 +16,7 @@ def instructions():
 {("-")*40}"""
     print(header)
 
+# Function to fetch data from selected API
 def request_handler(api_url):
     request = requests.get(api_url)
     
@@ -26,18 +28,24 @@ def request_handler(api_url):
     request = json.loads(request.text)
     return request
 
+# Function to get wins, draws, losses and points
 def save_season_data(api_url):
     data = request_handler(api_url)
     
     gamedays = data["gamedays"]
     teams = data["teams"]
     scoretable = {}
+    
+    # Creates a scorecard for each team
     for team in teams:
         scoretable[team] = [0, 0, 0, 0]
+    
+    # Updates the scorecard using the change_results() function
     for date in gamedays:
         change_results(scoretable, request_handler(api_url + "/" + date))
     return scoretable
 
+# Function to change the values of the scorecard
 def change_results(dic, data):
     # Takes out the list of games for the day that wass passed in
     matches = data["games"]
@@ -52,8 +60,6 @@ def change_results(dic, data):
         away_score = match["score"]["away"]["goals"]
         away_team = match["score"]["away"]["team"]
 
-
-        # TODO: fixa pa battre satt
         if home_score > away_score:
             # Increse W by 1 and P by 3
             dic[home_team][0] += 1
@@ -79,7 +85,7 @@ def change_results(dic, data):
             dic[home_team][3] += 1
             dic[away_team][3] += 1
 
-            
+# Function to list all available seasons
 def list_seasons():
     seasons = request_handler(base_url)["seasons"]
     
@@ -88,6 +94,7 @@ def list_seasons():
         print("| " + season)
     print("-"*40)
     
+# Function to view data from selected season
 def view_season():
     print("-"*40)
     selected_year = input("| Year > ")
@@ -112,12 +119,13 @@ def view_season():
     
     print("*"*40)
 
-
+# Dictionary of operators
 operations = {
     "list": list_seasons,
     "view": view_season
 }
 
+# Main loop
 while True:
     os.system("cls" if os.name == "nt" else "clear")
     instructions()
